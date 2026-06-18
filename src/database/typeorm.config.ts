@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+//console.log('DB PASSWORD:', process.env.DB_PASSWORD);
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
