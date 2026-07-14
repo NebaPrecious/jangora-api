@@ -23,8 +23,8 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ nullable: true })
-  profileImageUrl: string;
+  @Column({ nullable: true, type: 'varchar', default: null })
+  profileImageUrl: string | null;
 
   @Column()
   authProvider: string;
