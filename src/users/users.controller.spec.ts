@@ -12,10 +12,12 @@ describe('UsersController', () => {
   let controller: UsersController;
   const usersService = {
     findByFirebaseUid: jest.fn(),
+    updateUser: jest.fn(),
   };
 
   beforeEach(async () => {
     usersService.findByFirebaseUid.mockReset();
+    usersService.updateUser.mockReset();
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
@@ -56,5 +58,32 @@ describe('UsersController', () => {
     await expect(
       controller.getCurrentUser({ user: { uid: 'firebase-uid' } } as any),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should update only the authenticated user profile', async () => {
+    const user = { id: 'user-id', firebaseUid: 'firebase-uid' };
+    const updated = { ...user, firstName: 'Ada', lastName: 'Lovelace' };
+    usersService.findByFirebaseUid.mockResolvedValue(user);
+    usersService.updateUser.mockResolvedValue(updated);
+
+    await expect(
+      controller.updateCurrentUser({ user: { uid: 'firebase-uid' } } as any, {
+        firstName: 'Ada',
+        lastName: 'Lovelace',
+        email: 'bad@example.com',
+      } as any),
+    ).rejects.toThrow();
+
+    await expect(
+      controller.updateCurrentUser({ user: { uid: 'firebase-uid' } } as any, {
+        firstName: 'Ada',
+        lastName: 'Lovelace',
+      }),
+    ).resolves.toEqual(updated);
+    expect(usersService.updateUser).toHaveBeenCalledWith(user, {
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      profileImageUrl: undefined,
+    });
   });
 });

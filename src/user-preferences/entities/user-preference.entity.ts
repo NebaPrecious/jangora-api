@@ -15,12 +15,21 @@ export class UserPreference {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user!: User;
+
+  @Column({ type: 'text', array: true, default: () => 'ARRAY[]::text[]' })
+  primaryGoals!: string[];
 
   @Column({ default: 'XAF' })
   preferredCurrency!: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  incomeRange!: string | null;
+
+  @Column({ type: 'text', array: true, default: () => 'ARRAY[]::text[]' })
+  notificationPreferences!: string[];
 
   @Column({ default: 'English' })
   language!: string;

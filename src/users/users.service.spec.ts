@@ -12,6 +12,10 @@ describe('UsersService', () => {
   };
 
   beforeEach(async () => {
+    userRepository.findOne.mockReset();
+    userRepository.create.mockReset();
+    userRepository.save.mockReset();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
@@ -27,5 +31,21 @@ describe('UsersService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should update allowed profile fields', async () => {
+    const user = { firstName: 'Old', lastName: 'Name', profileImageUrl: null } as User;
+    userRepository.save.mockImplementation(async (value) => value);
+
+    await expect(
+      service.updateUser(user, {
+        firstName: 'New',
+        profileImageUrl: 'https://example.com/avatar.png',
+      }),
+    ).resolves.toEqual({
+      firstName: 'New',
+      lastName: 'Name',
+      profileImageUrl: 'https://example.com/avatar.png',
+    });
   });
 });

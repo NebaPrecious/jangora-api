@@ -22,6 +22,14 @@ export class AuthService {
       user = await this.usersService.findByEmail(email);
     }
 
+    if (user && user.firebaseUid !== firebaseUid) {
+      user = await this.usersService.updateFirebaseIdentity(user, {
+        firebaseUid,
+        profileImageUrl: photoURL || null,
+        authProvider: 'firebase',
+      });
+    }
+
     if (!user) {
       const [firstName, ...remainingName] = displayName ? displayName.split(' ') : [email.split('@')[0]];
       const lastName = remainingName.join(' ') || '';

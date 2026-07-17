@@ -42,4 +42,45 @@ export class UsersService {
 
     return this.userRepository.save(user);
   }
+
+  async updateUser(
+    user: User,
+    input: {
+      firstName?: string;
+      lastName?: string;
+      profileImageUrl?: string | null;
+    },
+  ): Promise<User> {
+    if (input.firstName !== undefined) {
+      user.firstName = input.firstName;
+    }
+
+    if (input.lastName !== undefined) {
+      user.lastName = input.lastName;
+    }
+
+    if (input.profileImageUrl !== undefined) {
+      user.profileImageUrl = input.profileImageUrl;
+    }
+
+    return this.userRepository.save(user);
+  }
+
+  async updateFirebaseIdentity(
+    user: User,
+    input: {
+      firebaseUid: string;
+      authProvider: string;
+      profileImageUrl?: string | null;
+    },
+  ): Promise<User> {
+    user.firebaseUid = input.firebaseUid;
+    user.authProvider = input.authProvider;
+
+    if (!user.profileImageUrl && input.profileImageUrl) {
+      user.profileImageUrl = input.profileImageUrl;
+    }
+
+    return this.userRepository.save(user);
+  }
 }
